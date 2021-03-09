@@ -4,22 +4,19 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.dicoding.movilogue.data.Movie
+import com.dicoding.movilogue.data.TVShow
 import com.dicoding.movilogue.utils.Companion
 import com.dicoding.movilogue.utils.MappingHelper
 import com.loopj.android.http.AsyncHttpResponseHandler
 import cz.msebera.android.httpclient.Header
-import org.json.JSONArray
 import org.json.JSONObject
 
-class TvshowViewModel : ViewModel() {
-    private var listUsers = MutableLiveData<ArrayList<Movie>>()
+class TVShowViewModel : ViewModel() {
+    private var listUsers = MutableLiveData<ArrayList<TVShow>>()
     private val totalCount = MutableLiveData<Int>()
 
     fun setListUsers(query: String) {
-        var url = "https://api.github.com/users"
-        if (query.isNotEmpty())
-            url = "https://api.github.com/search/users?q=$query"
+        var url = "https://api.themoviedb.org/3/tv/popular"
         val client = Companion.getAsyncHttpClient()
         client.get(url, object : AsyncHttpResponseHandler(){
             override fun onSuccess(
@@ -30,14 +27,9 @@ class TvshowViewModel : ViewModel() {
                 if (statusCode == 200) {
                     try {
                         val result = String(responseBody)
-                        val jsonArray = if (query.isNotEmpty()) {
-                            val responseObject = JSONObject(result)
-                            totalCount.postValue(responseObject.getInt("total_count"))
-                            responseObject.getJSONArray("items")
-                        } else {
-                            JSONArray(result)
-                        }
-                        listUsers.postValue(MappingHelper.mapJsonArrayToArrayList(jsonArray))
+                        val responseObject = JSONObject(result)
+                        val jsonArray = responseObject.getJSONArray("results")
+                        listUsers.postValue(MappingHelper.mapTVShowJsonArrayToArrayList(jsonArray))
                     } catch (e: Exception) {
                         Log.d("Exception", e.message.toString())
                     }
@@ -66,7 +58,7 @@ class TvshowViewModel : ViewModel() {
         setListUsers("")
     }
 
-    fun getListUsers(): LiveData<ArrayList<Movie>> {
+    fun getListUsers(): LiveData<ArrayList<TVShow>> {
         return listUsers
     }
 

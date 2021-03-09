@@ -9,17 +9,14 @@ import com.dicoding.movilogue.utils.Companion
 import com.dicoding.movilogue.utils.MappingHelper
 import com.loopj.android.http.AsyncHttpResponseHandler
 import cz.msebera.android.httpclient.Header
-import org.json.JSONArray
 import org.json.JSONObject
 
 class MovieViewModel : ViewModel() {
-    private var listUsers = MutableLiveData<ArrayList<Movie>>()
+    private var listItems = MutableLiveData<ArrayList<Movie>>()
     private val totalCount = MutableLiveData<Int>()
 
-    fun setListUsers(query: String) {
-        var url = "https://api.github.com/users"
-        if (query.isNotEmpty())
-            url = "https://api.github.com/search/users?q=$query"
+    fun setListItems() {
+        var url = "https://api.themoviedb.org/3/movie/popular"
         val client = Companion.getAsyncHttpClient()
         client.get(url, object : AsyncHttpResponseHandler(){
             override fun onSuccess(
@@ -30,14 +27,9 @@ class MovieViewModel : ViewModel() {
                 if (statusCode == 200) {
                     try {
                         val result = String(responseBody)
-                        val jsonArray = if (query.isNotEmpty()) {
-                            val responseObject = JSONObject(result)
-                            totalCount.postValue(responseObject.getInt("total_count"))
-                            responseObject.getJSONArray("items")
-                        } else {
-                            JSONArray(result)
-                        }
-                        listUsers.postValue(MappingHelper.mapJsonArrayToArrayList(jsonArray))
+                        val responseObject = JSONObject(result)
+                        val jsonArray = responseObject.getJSONArray("results")
+                        listItems.postValue(MappingHelper.mapMovieJsonArrayToArrayList(jsonArray))
                     } catch (e: Exception) {
                         Log.d("Exception", e.message.toString())
                     }
@@ -62,12 +54,8 @@ class MovieViewModel : ViewModel() {
         })
     }
 
-    fun setListUsers() {
-        setListUsers("")
-    }
-
-    fun getListUsers(): LiveData<ArrayList<Movie>> {
-        return listUsers
+    fun getListItems(): LiveData<ArrayList<Movie>> {
+        return listItems
     }
 
     fun getTotalCount(): LiveData<Int> {

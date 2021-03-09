@@ -2,7 +2,7 @@ package com.dicoding.movilogue.utils
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.viewbinding.BuildConfig
+import com.dicoding.movilogue.BuildConfig
 import com.loopj.android.http.AsyncHttpClient
 
 class Companion {
@@ -13,6 +13,7 @@ class Companion {
         const val STATE_QUERY = "com.dicoding.movilogue.state_query"
         const val STATE_RESULT = "com.dicoding.movilogue.state_result"
         const val ALARM_EXTRA_MESSAGE = "com.dicoding.movilogue.alarm_message"
+        const val POSTER_PATH_BASE_URL = "https://image.tmdb.org/t/p/w92/"
 
         @JvmStatic
         fun newInstance(fragment: Fragment, index: Int) =
@@ -24,10 +25,9 @@ class Companion {
 
         fun getAsyncHttpClient(): AsyncHttpClient {
             val client = AsyncHttpClient()
-            /*val token = BuildConfig.API_KEY
+            val token = BuildConfig.API_KEY
             if (token.isNotEmpty())
-                client.addHeader("Authorization", "token $token")*/
-            client.addHeader("User-Agent", "request")
+                client.addHeader("Authorization", "token $token")
             return  client
         }
     }

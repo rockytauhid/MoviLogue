@@ -2,28 +2,23 @@ package com.dicoding.movilogue.data
 
 import android.os.Parcel
 import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Movie(
-    var id: Int = 0,
-    var login: String? = null,
-    var avatarUrl: String? = null,
-    var url: String? = null,
-    var followersUrl: String? = null,
-    var followingUrl: String? = null,
-    var reposUrl: String? = null,
-    var totalCount: Int = 0,
-    var deadline: String? = null
+        var id: Int = 0,
+        var title: String? = null,
+        var overview: String? = null,
+        var vote_average: Double? = null,
+        var poster_path: String? = null,
+        var release_date: String? = null
 ) : Parcelable {
     constructor(parcel: Parcel) :this() {
         id = parcel.readInt()
-        login = parcel.readString()
-        avatarUrl = parcel.readString()
-        url = parcel.readString()
-        followersUrl = parcel.readString()
-        followingUrl = parcel.readString()
-        reposUrl = parcel.readString()
-        totalCount = parcel.readInt()
+        title = parcel.readString()
+        overview = parcel.readString()
+        vote_average = parcel.readDouble()
+        poster_path = parcel.readString()
+        release_date = parcel.readString()
     }
 }
